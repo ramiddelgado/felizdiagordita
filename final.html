@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz San Valentin!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #000;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .final-container {
+            width: 390px;
+            height: 844px;
+            background: linear-gradient(45deg, #ffb3d3, #ff7cac);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Agregar overlay negro */
+        .final-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3); /* Overlay negro semi-transparente */
+            z-index: 1;
+        }
+
+        .slideshow-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 2; /* Por encima del overlay */
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .text-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 42px;
+            font-weight: 600;
+            text-align: center;
+            z-index: 10;
+            text-shadow: 
+                2px 2px 0 #000,
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                0 2px 0 #000,
+                2px 0 0 #000,
+                0 -2px 0 #000,
+                -2px 0 0 #000;
+            opacity: 0;
+            transition: all 1s ease-in-out;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .slide.active .text-overlay {
+            opacity: 1;
+        }
+
+        .slide img {
+            position: relative;
+            z-index: 5;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+
+        /* Efecto de glow cuando la foto está activa */
+        .slide.active img {
+            animation: glow 2.8s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0% {
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+            }
+            100% {
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+            }
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .show-close-button {
+            opacity: 1;
+        }
+
+        .replay-button {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 20;
+            opacity: 0;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: none;
+        }
+
+        .replay-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .show-replay {
+            opacity: 1;
+            display: block;
+        }
+
+        .final-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            max-width: 80%;
+            line-height: 1.5;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 20;
+            display: none;
+        }
+
+        .show-message {
+            opacity: 1;
+            display: block;
+        }
+
+        .next-button {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 20;
+            opacity: 0;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: none;
+        }
+
+        .next-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .show-next {
+            opacity: 1;
+            display: block;
+        }
+
+        .final-image-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ffb3d3, #ff7cac);
+            z-index: 30;
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .final-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffcce6;
+            font-size: 32px;
+            font-weight: 600;
+            text-align: center;
+            z-index: 31;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            width: 90%;
+        }
+
+        .final-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .show-final-image {
+            display: block;
+            opacity: 1;
+        }
+
+        .restart-button {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 31;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .restart-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-50%) scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <audio id="backgroundMusic" loop>
+        <source src="/those-eyes.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="final-container">
+        <button class="close-button">×</button>
+        <button class="replay-button">Ver otra vez ♥</button>
+        <button class="next-button">Siguiente ♥</button>
+        <div class="final-message">No tuve mucho tiempo para hacer esto pero es un pequeño detalle hecho a mano, creo que es lindo. Tengo algo mas para decirte, lo vas a encontrar debajo de nuestro gordo Archie :). <br> Gracias por verlo, te amo y creo en nosotros.</div>
+        <div class="slideshow-container">
+            <div class="slide">
+                <div class="text-overlay">Sos</div>
+                <img src="imgs/love/love2.jpg" alt="Foto 1">
+            </div>
+            <div class="slide">
+                <div class="text-overlay">el amor</div>
+                <img src="imgs/love/love3.jpg" alt="Foto 2">
+            </div>
+            <div class="slide">
+                <div class="text-overlay">de mi vida</div>
+                <img src="imgs/love/love4.jpg" alt="Foto 3">
+            </div>
+            <div class="slide">
+                <div class="text-overlay">y aunque</div>
+                <img src="imgs/love/love5.jpg" alt="Foto 4">
+            </div>
+            <div class="slide">
+                <div class="text-overlay">a veces diga</div>
+                <img src="imgs/love/love6.jpg" alt="Foto 5">
+            </div>
+            <div class="slide">
+                <div class="text-overlay">cosas hirientes</div>
+                <img src="imgs/love/love7.jpg" alt="Foto 6">
+            </div>
+            <div class="slide">
+                <div class="text-overlay">quiero que seas</div>
+                <img src="imgs/love/love8.jpg" alt="Foto 7">
+            </div>
+            <div class="slide">
+                <div class="text-overlay">mi novia y mi esposa</div>
+                <img src="imgs/love/love9.jpg" alt="Foto 8">
+            </div>
+            <div class="slide">
+                <div class="text-overlay">para siempre ♥</div>
+                <img src="imgs/love/love10.jpg" alt="Foto 8">
+            </div>
+        </div>
+        <div class="final-image-container">
+            <div class="final-text">Feliz San Valentin hermosa! Ahora si, anda busca en la silla del Archie jajaja</div>
+            <img src="/imgs/felizsanvalentin.jpg" alt="Feliz San Valentín" class="final-image">
+            <a href="index.html" class="restart-button">Empezar de nuevo</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const backgroundMusic = document.getElementById('backgroundMusic');
+            const slides = document.querySelectorAll('.slide');
+            const closeButton = document.querySelector('.close-button');
+            const replayButton = document.querySelector('.replay-button');
+            const nextButton = document.querySelector('.next-button');
+            const finalImageContainer = document.querySelector('.final-image-container');
+            let currentSlide = 0;
+            let isPlaying = true;
+            let slideInterval;
+
+            // Función para reproducir música
+            function playMusic() {
+                backgroundMusic.play().catch(error => {
+                    console.log("Reproducción automática bloqueada");
+                });
+            }
+
+            // Intentar reproducir música con la primera interacción
+            document.addEventListener('click', () => {
+                if (backgroundMusic.paused) {
+                    playMusic();
+                }
+            }, { once: true });
+
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                slides[index].classList.add('active');
+                
+                if (index === slides.length - 1) {
+                    closeButton.classList.add('show-close-button');
+                } else {
+                    closeButton.classList.remove('show-close-button');
+                }
+            }
+
+            function nextSlide() {
+                if (currentSlide < slides.length - 1) {
+                    currentSlide++;
+                    showSlide(currentSlide);
+                } else if (isPlaying) {
+                    clearInterval(slideInterval);
+                    isPlaying = false;
+                }
+            }
+
+            function startSlideshow() {
+                currentSlide = 0;
+                isPlaying = true;
+                showSlide(0);
+                replayButton.classList.remove('show-replay');
+                closeButton.classList.remove('show-close-button');
+                slideInterval = setInterval(nextSlide, 2800);
+                
+                // Asegurarse de que la música esté sonando
+                if (backgroundMusic.paused) {
+                    playMusic();
+                }
+            }
+
+            startSlideshow();
+
+            closeButton.addEventListener('click', () => {
+                clearInterval(slideInterval);
+                slides.forEach(slide => slide.classList.remove('active'));
+                replayButton.classList.add('show-replay');
+                document.querySelector('.final-message').classList.add('show-message');
+                nextButton.classList.add('show-next');
+            });
+
+            replayButton.addEventListener('click', () => {
+                startSlideshow();
+                document.querySelector('.final-message').classList.remove('show-message');
+                nextButton.classList.remove('show-next');
+                finalImageContainer.classList.remove('show-final-image');
+            });
+
+            nextButton.addEventListener('click', () => {
+                finalImageContainer.classList.add('show-final-image');
+                replayButton.classList.remove('show-replay');
+                document.querySelector('.final-message').classList.remove('show-message');
+                nextButton.classList.remove('show-next');
+            });
+        });
+    </script>
+</body>
+</html> 
